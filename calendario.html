@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservar Hora · Lumière</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAF7F5;
+      --white: #FFFFFF;
+      --primary: #B8927E;
+      --primary-soft: rgba(184,146,126,.1);
+      --sage: #7A9E80;
+      --dark: #2C2018;
+      --muted: rgba(44,32,24,.45);
+      --border: rgba(184,146,126,.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: 'Jost', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 4rem;
+    }
+
+    /* ── Nav ── */
+    .back {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: 1.5rem 1.75rem;
+      font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--primary); text-decoration: none; transition: opacity .2s;
+    }
+    .back:hover { opacity: .7; }
+
+    /* ── Header ── */
+    .page-header { text-align: center; padding: .5rem 2rem 2rem; }
+    .eyebrow {
+      font-size: .62rem; letter-spacing: .5em; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 1rem;
+    }
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      font-weight: 300; font-style: italic;
+      color: var(--dark); line-height: 1.1;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      max-width: 580px; margin: 0 auto; padding: 0 1.25rem;
+      display: flex; flex-direction: column; gap: .85rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white); border-radius: .875rem;
+      border: 1px solid var(--border); box-shadow: 0 2px 16px rgba(44,32,24,.05);
+      padding: 1.25rem 1.4rem;
+    }
+
+    /* ── Labels ── */
+    .lbl {
+      font-size: .6rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: .7rem; display: block;
+    }
+
+    /* ── Selects ── */
+    select {
+      width: 100%; border: 1px solid var(--border); background: var(--bg);
+      color: var(--dark); font-family: 'Jost', sans-serif;
+      font-size: .83rem; letter-spacing: .02em;
+      padding: .7rem 2.5rem .7rem 1rem; border-radius: .5rem;
+      appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8927E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 1rem center;
+      transition: border-color .2s;
+    }
+    select:focus { outline: none; border-color: var(--primary); }
+
+    /* ── Service summary ── */
+    .svc-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .58rem; letter-spacing: .15em; text-transform: uppercase; font-weight: 500;
+      padding: .3rem .75rem; border-radius: 100px;
+    }
+    .badge-pending { background: rgba(184,146,126,.12); color: var(--primary); }
+    .badge-ok      { background: rgba(122,158,128,.13); color: var(--sage); }
+    .svc-name {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 400;
+      color: var(--dark); margin-bottom: .35rem;
+    }
+    .svc-meta { font-size: .75rem; color: var(--muted); letter-spacing: .02em; }
+    .pro-row { display: flex; align-items: center; gap: .6rem; margin-top: 1.2rem; }
+    .pro-avatar {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--primary-soft);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 500; color: var(--primary); flex-shrink: 0;
+    }
+    .pro-select { width: auto; flex: 1; padding: .45rem 2.2rem .45rem .85rem; border-radius: 100px; font-size: .78rem; }
+
+    /* ── Date strip ── */
+    .date-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .month-lbl { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 400; color: var(--dark); }
+    .nav-grp { display: flex; gap: .4rem; }
+    .nav-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--white);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .18s;
+    }
+    .nav-btn:hover { background: var(--primary-soft); border-color: var(--primary); }
+    .nav-btn svg { width: 13px; height: 13px; stroke: var(--primary); }
+    .strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: .35rem; }
+    .day-btn {
+      display: flex; flex-direction: column; align-items: center; gap: .3rem;
+      padding: .65rem .25rem; border-radius: .65rem;
+      border: 1px solid transparent; background: transparent;
+      cursor: pointer; transition: all .18s;
+    }
+    .day-btn:hover:not(.day-active) { background: var(--primary-soft); }
+    .day-active { background: var(--primary) !important; }
+    .day-active .dname,
+    .day-active .dnum { color: #fff !important; }
+    .dname { font-size: .57rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .dnum  { font-size: .95rem; font-weight: 500; color: var(--dark); line-height: 1; }
+    .day-today:not(.day-active) .dnum::after {
+      content: ''; display: block; width: 4px; height: 4px;
+      border-radius: 50%; background: var(--sage); margin: .2rem auto 0;
+    }
+    .day-past { opacity: .3; pointer-events: none; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: .4rem; margin-bottom: 1.1rem; }
+    .tab {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .45rem 1rem; border-radius: 100px;
+      border: 1px solid var(--border); background: transparent; cursor: pointer;
+      font-family: 'Jost', sans-serif; font-size: .7rem; letter-spacing: .06em;
+      color: var(--muted); transition: all .18s;
+    }
+    .tab:hover { border-color: var(--primary); color: var(--dark); }
+    .tab-active { background: var(--dark); border-color: var(--dark); color: #fff !important; }
+
+    /* ── Slot grid ── */
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: .5rem; }
+    .slot {
+      padding: .6rem .4rem; text-align: center; border-radius: .45rem;
+      border: 1px solid var(--border); background: transparent; cursor: pointer;
+      font-family: 'Jost', sans-serif; font-size: .8rem; color: var(--dark); transition: all .18s;
+    }
+    .slot:hover:not(.slot-taken) { border-color: var(--primary); color: var(--primary); }
+    .slot-active { background: var(--sage); border-color: var(--sage); color: #fff !important; }
+    .slot-taken  { opacity: .3; cursor: not-allowed; text-decoration: line-through; }
+    .no-slots    { text-align: center; padding: 1.75rem 1rem; font-size: .76rem; color: var(--muted); }
+
+    /* ── Confirm ── */
+    .btn-confirm {
+      width: 100%; padding: .95rem 2rem; border-radius: .75rem; border: none; cursor: pointer;
+      font-family: 'Jost', sans-serif; font-size: .68rem; font-weight: 500;
+      letter-spacing: .28em; text-transform: uppercase; transition: all .22s;
+    }
+    .btn-ready    { background: var(--primary); color: #fff; }
+    .btn-ready:hover { background: #a07060; }
+    .btn-disabled { background: rgba(184,146,126,.13); color: rgba(44,32,24,.3); cursor: not-allowed; }
+
+    /* ── WhatsApp ── */
+    .or-row {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(184,146,126,.4);
+    }
+    .or-row::before, .or-row::after { content:''; flex:1; height:1px; background: var(--border); }
+    .wa-wrap { text-align: center; }
+    .wa-hint { font-size: .72rem; color: var(--muted); letter-spacing: .03em; margin-bottom: .9rem; }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: .7rem;
+      background: #25d366; color: #fff; padding: .8rem 1.75rem; border-radius: 100px;
+      font-size: .63rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .btn-wa:hover { opacity: .88; }
+
+    @media (max-width: 400px) {
+      .dname { font-size: .5rem; }
+      .dnum  { font-size: .85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  Volver
+</a>
+
+<div class="page-header">
+  <div class="eyebrow">Reserva de hora</div>
+  <h1 class="page-title">Agenda tu<br>próxima sesión</h1>
+</div>
+
+<div class="wrap">
+
+  <!-- Tratamiento -->
+  <div class="card">
+    <span class="lbl">Seleccionar tratamiento</span>
+    <select id="svcSelect"></select>
+  </div>
+
+  <!-- Resumen del servicio -->
+  <div class="card">
+    <div class="svc-hd">
+      <span class="badge badge-pending" id="badge">
+        <svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+        Sin hora seleccionada
+      </span>
+    </div>
+    <div class="svc-name" id="svcName"></div>
+    <div class="svc-meta" id="svcMeta"></div>
+    <div class="pro-row">
+      <div class="pro-avatar" id="proAvatar"></div>
+      <select id="proSelect" class="pro-select"></select>
+    </div>
+  </div>
+
+  <!-- Fecha -->
+  <div class="card">
+    <div class="date-hd">
+      <span class="month-lbl" id="monthLbl"></span>
+      <div class="nav-grp">
+        <button class="nav-btn" id="prevWeek" aria-label="Semana anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="nav-btn" id="nextWeek" aria-label="Semana siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="strip" id="strip"></div>
+  </div>
+
+  <!-- Horas -->
+  <div class="card">
+    <span class="lbl">Horas disponibles</span>
+    <div class="tabs" id="tabs"></div>
+    <div class="slots-grid" id="slots"></div>
+  </div>
+
+  <!-- Confirmar -->
+  <button class="btn-confirm btn-disabled" id="btnConfirm" disabled>Confirmar reserva</button>
+
+  <div class="or-row">o</div>
+
+  <div class="wa-wrap">
+    <p class="wa-hint">Prefiero agendar directamente por WhatsApp:</p>
+    <a href="https://wa.me/56900000000?text=Hola%2C%20quiero%20agendar%20una%20cita%20en%20Lumi%C3%A8re" target="_blank" class="btn-wa">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Agendar por WhatsApp
+    </a>
+  </div>
+
+</div>
+
+<script>
+  const SERVICES = [
+    { id:1, name:'Limpieza Facial Profunda',         dur:60, price:35000, pros:['Valentina E.','Catalina M.'] },
+    { id:2, name:'Hidratación Profunda',             dur:45, price:28000, pros:['Valentina E.','Andrea L.']   },
+    { id:3, name:'Peeling Químico',                  dur:50, price:42000, pros:['Catalina M.','Andrea L.']   },
+    { id:4, name:'Microblading de Cejas',            dur:90, price:65000, pros:['Andrea L.']                  },
+    { id:5, name:'Lifting de Pestañas',              dur:45, price:30000, pros:['Valentina E.','Catalina M.'] },
+    { id:6, name:'Relleno Ácido Hialurónico',        dur:60, price:85000, pros:['Valentina E.']               },
+  ];
+
+  const SLOTS = {
+    mañana: ['9:00','9:45','10:30','11:15','12:00'],
+    tarde:  ['14:00','14:45','15:30','16:15','17:00','17:45'],
+    noche:  [],
+  };
+
+  const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const DAYS   = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  const addDays  = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return r; };
+  const sameDay  = (a,b) => a.toDateString()===b.toDateString();
+  const isToday  = d => sameDay(d,new Date());
+  const isPast   = d => { const t=new Date(); t.setHours(0,0,0,0); return d<t; };
+  const fmtPrice = n => '$'+n.toLocaleString('es-CL');
+  const cap      = s => s[0].toUpperCase()+s.slice(1);
+
+  // Deterministic "taken" slots per date
+  const takenFor = date => {
+    const all = [...SLOTS.mañana,...SLOTS.tarde];
+    const seed = date.getDate()+date.getMonth()*31;
+    return new Set(all.filter((_,i)=>(i+seed)%3===0));
+  };
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  let S = {
+    svc: SERVICES[0], pro: SERVICES[0].pros[0],
+    weekStart: new Date(today), date: new Date(today),
+    time: null, tab: 'tarde',
+  };
+
+  // ── Service select ──────────────────────────────────────
+  function renderSvcSelect() {
+    const el = document.getElementById('svcSelect');
+    el.innerHTML = SERVICES.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    el.value = S.svc.id;
+    el.onchange = () => {
+      S.svc = SERVICES.find(s=>s.id===+el.value);
+      S.pro = S.svc.pros[0]; S.time = null;
+      renderSummary(); renderProSelect(); renderSlots(); renderConfirm(); renderBadge();
+    };
+  }
+
+  // ── Summary ─────────────────────────────────────────────
+  function renderSummary() {
+    document.getElementById('svcName').textContent = S.svc.name;
+    document.getElementById('svcMeta').textContent = `${S.svc.dur} min · ${S.pro} · ${fmtPrice(S.svc.price)}`;
+  }
+
+  // ── Pro select ──────────────────────────────────────────
+  function renderProSelect() {
+    const el = document.getElementById('proSelect');
+    el.innerHTML = S.svc.pros.map(p=>`<option>${p}</option>`).join('');
+    el.value = S.pro;
+    document.getElementById('proAvatar').textContent = S.pro[0];
+    el.onchange = () => {
+      S.pro = el.value;
+      document.getElementById('proAvatar').textContent = S.pro[0];
+      document.getElementById('svcMeta').textContent = `${S.svc.dur} min · ${S.pro} · ${fmtPrice(S.svc.price)}`;
+    };
+  }
+
+  // ── Date strip ──────────────────────────────────────────
+  function renderStrip() {
+    const strip = document.getElementById('strip');
+    strip.innerHTML = '';
+    for (let i=0;i<7;i++) {
+      const d = addDays(S.weekStart,i);
+      const btn = document.createElement('button');
+      btn.className = 'day-btn'
+        +(sameDay(d,S.date)?' day-active':'')
+        +(isToday(d)&&!sameDay(d,S.date)?' day-today':'')
+        +(!isToday(d)&&isPast(d)?' day-past':'');
+      btn.innerHTML = `<span class="dname">${DAYS[d.getDay()]}</span><span class="dnum">${d.getDate()}</span>`;
+      btn.addEventListener('click',()=>{
+        S.date=d; S.time=null;
+        renderStrip(); renderSlots(); renderConfirm(); renderBadge();
+      });
+      strip.appendChild(btn);
+    }
+    const last = addDays(S.weekStart,6);
+    const sm = MONTHS[S.weekStart.getMonth()], em = MONTHS[last.getMonth()];
+    document.getElementById('monthLbl').textContent =
+      sm===em ? `${cap(sm)} ${last.getFullYear()}` : `${cap(sm)} – ${cap(em)} ${last.getFullYear()}`;
+  }
+
+  // ── Tabs ────────────────────────────────────────────────
+  function renderTabs() {
+    const ICONS = {
+      mañana:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
+      tarde: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 6v2M12 16v2M6 12H4M20 12h-2"/></svg>`,
+      noche: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    };
+    const LABEL = { mañana:'Mañana', tarde:'Tarde', noche:'Noche' };
+    document.getElementById('tabs').innerHTML = Object.keys(SLOTS).map(t=>
+      `<button class="tab${S.tab===t?' tab-active':''}" data-t="${t}">${ICONS[t]} ${LABEL[t]}</button>`
+    ).join('');
+    document.querySelectorAll('.tab').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        S.tab=btn.dataset.t; S.time=null;
+        renderTabs(); renderSlots(); renderConfirm(); renderBadge();
+      });
+    });
+  }
+
+  // ── Slots ───────────────────────────────────────────────
+  function renderSlots() {
+    const el = document.getElementById('slots');
+    const list = SLOTS[S.tab];
+    if (!list.length) {
+      el.innerHTML = `<div class="no-slots">No hay horario nocturno disponible.</div>`;
+      return;
+    }
+    const taken = takenFor(S.date);
+    el.innerHTML = list.map(t=>{
+      const ok = !taken.has(t);
+      const active = S.time===t;
+      return `<button class="slot${active?' slot-active':''}${!ok?' slot-taken':''}" data-t="${t}"${!ok?' disabled':''}>${t}</button>`;
+    }).join('');
+    el.querySelectorAll('.slot:not(.slot-taken)').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        S.time=btn.dataset.t;
+        renderSlots(); renderConfirm(); renderBadge();
+      });
+    });
+  }
+
+  // ── Badge ───────────────────────────────────────────────
+  function renderBadge() {
+    const b = document.getElementById('badge');
+    if (S.time) {
+      b.className = 'badge badge-ok';
+      b.innerHTML = `<svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg> ${DAYS[S.date.getDay()]} ${S.date.getDate()} · ${S.time}`;
+    } else {
+      b.className = 'badge badge-pending';
+      b.innerHTML = `<svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg> Sin hora seleccionada`;
+    }
+  }
+
+  // ── Confirm ─────────────────────────────────────────────
+  function renderConfirm() {
+    const btn = document.getElementById('btnConfirm');
+    if (S.time) { btn.className='btn-confirm btn-ready'; btn.disabled=false; }
+    else        { btn.className='btn-confirm btn-disabled'; btn.disabled=true; }
+  }
+
+  document.getElementById('btnConfirm').addEventListener('click', ()=>{
+    const ds = `${DAYS[S.date.getDay()]} ${S.date.getDate()} de ${MONTHS[S.date.getMonth()]}`;
+    alert(`Reserva confirmada\n\n${S.svc.name}\n${ds} · ${S.time}\nEspecialista: ${S.pro}\nValor referencial: ${fmtPrice(S.svc.price)}\n\nRecibirás una confirmación por correo y WhatsApp.`);
+  });
+
+  document.getElementById('prevWeek').addEventListener('click', ()=>{
+    S.weekStart=addDays(S.weekStart,-7); S.time=null;
+    renderStrip(); renderSlots(); renderConfirm(); renderBadge();
+  });
+  document.getElementById('nextWeek').addEventListener('click', ()=>{
+    S.weekStart=addDays(S.weekStart,7); S.time=null;
+    renderStrip(); renderSlots(); renderConfirm(); renderBadge();
+  });
+
+  // Init
+  renderSvcSelect(); renderSummary(); renderProSelect();
+  renderStrip(); renderTabs(); renderSlots(); renderConfirm();
+</script>
+</body>
+</html>
