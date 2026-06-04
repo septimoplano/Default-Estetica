@@ -22,7 +22,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; font-size: 110%; }
     body { background: var(--bg); color: var(--dark); font-family: 'Jost', sans-serif; overflow-x: hidden; }
     img  { display: block; max-width: 100%; }
     a    { text-decoration: none; color: inherit; }
@@ -89,7 +89,7 @@
 
     /* Hero right — imagen con forma orgánica */
     .hero-right { position: relative; display: flex; align-items: center; justify-content: center; padding: 3rem 5rem 3rem 2rem; }
-    .hero-img-wrap { position: relative; width: 100%; height: clamp(480px, 75vh, 720px); border-radius: 40% 60% 60% 40% / 50% 50% 50% 50%; overflow: hidden; }
+    .hero-img-wrap { position: relative; width: 100%; height: clamp(27rem, 75vh, 41rem); border-radius: 40% 60% 60% 40% / 50% 50% 50% 50%; overflow: hidden; }
     .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.85); transition: filter .5s; }
     .hero-img-wrap:hover img { filter: saturate(1); }
     .hero-float-badge {
@@ -129,7 +129,7 @@
       transition: box-shadow .3s, transform .3s; cursor: default;
     }
     .card:hover { box-shadow: 0 8px 40px rgba(184,146,126,.18); transform: translateY(-4px); }
-    .card-vis { height: 130px; border-radius: .85rem; margin-bottom: 1.5rem; overflow: hidden; position: relative; background: rgba(184,146,126,.07); display: flex; align-items: center; justify-content: center; }
+    .card-vis { height: 7.5rem; border-radius: .85rem; margin-bottom: 1.5rem; overflow: hidden; position: relative; background: rgba(184,146,126,.07); display: flex; align-items: center; justify-content: center; }
     .card-badge { position: absolute; top: .6rem; right: .6rem; font-size: .5rem; letter-spacing: .3em; text-transform: uppercase; background: rgba(184,146,126,.12); color: var(--primary); padding: .25rem .6rem; border-radius: 100px; }
     .card-h { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 1.3rem; letter-spacing: .02em; color: var(--dark); margin-bottom: .4rem; }
     .card-p { font-size: .72rem; color: var(--muted); font-weight: 300; line-height: 1.75; }
@@ -259,7 +259,7 @@
       .hero { grid-template-columns: 1fr; }
       .hero-left { padding: 8rem 2rem 3rem; }
       .hero-right { padding: 0 2rem 4rem; }
-      .hero-img-wrap { height: 380px; border-radius: 2rem; }
+      .hero-img-wrap { height: 22rem; border-radius: 2rem; }
       .hero-float-badge { left: 1rem; bottom: 1.5rem; }
       .hero-badges { gap: .8rem; }
       .nav { top: 1rem; width: calc(100% - 2rem); padding: .8rem 1.25rem; }
